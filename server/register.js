@@ -1,6 +1,6 @@
-import { Strapi } from '@strapi/strapi';
+'use strict';
 
-export default ({ strapi }: { strapi: Strapi }) => {
+module.exports = ({ strapi }) => {
     strapi.customFields.register({
         name: 'title',
         plugin: 'bold-title-editor',
