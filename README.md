@@ -22,3 +22,13 @@ yarn build
 npm run build
 ```
 
+## Usage
+
+![bold title editor screenshot](./bold-title-editor.png)
+
+### Next.js
+
+```tsx
+<h1 dangerouslySetInnerHTML={{ __html: data.title }} />
+<h3><a href="#" dangerouslySetInnerHTML={{ __html: data.subtitle }} /></h3>
+```
