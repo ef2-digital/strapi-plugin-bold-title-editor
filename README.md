@@ -26,9 +26,15 @@ npm run build
 
 ![bold title editor screenshot](./bold-title-editor.png)
 
-### Next.js
+### React/Next.js
 
 ```tsx
-<h1 dangerouslySetInnerHTML={{ __html: data.title }} />
-<h3><a href="#" dangerouslySetInnerHTML={{ __html: data.subtitle }} /></h3>
+<h1 dangerouslySetInnerHTML={{ __html: title }} />
+<h3><a href="#" dangerouslySetInnerHTML={{ __html: title }} /></h3>
+```
+
+### Vue
+```html
+<h1 v-html="title" />
+<h3><a href="#" v-html="title" /></h3>
 ```

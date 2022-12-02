@@ -82,10 +82,10 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
     };
 
     const handleOnKeyDown = (event) => {
-        if (event.key === "Escape") {
+        if (event.key === 'Escape') {
             ref.current?.blur();
         }
-    }
+    };
 
     return (
         <Field name={name} id={name} error={error} hint={description && formatMessage(description)}>
@@ -94,15 +94,28 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
                     {formatMessage(intlLabel)}
                 </FieldLabel>
                 <Stack spacing={2} horizontal>
-                    <ContentEditable 
+                    <ContentEditable
                         innerRef={ref}
                         html={value ?? ''}
                         onPaste={handleOnPaste}
                         onChange={handleOnChange}
-                        onKeyDown={handleOnKeyDown} />
-                    <IconButton onClick={() => executeCommand('bold')} label="Bold" icon={<Bold />} />
-                    <IconButton onClick={handleOnClear} label="Clear format" icon={<FormatClear />} />
-                    <IconButton onClick={handleOnPreview} label="Show code" icon={preview ? <Code /> : <CodeOff />} />
+                        onKeyDown={handleOnKeyDown}
+                    />
+                    <IconButton
+                        onClick={() => executeCommand('bold')}
+                        label={formatMessage({ id: 'bold-title-editor.input.bold', defaultMessage: 'Bold' })}
+                        icon={<Bold />}
+                    />
+                    <IconButton
+                        onClick={handleOnClear}
+                        label={formatMessage({ id: 'bold-title-editor.input.clear', defaultMessage: 'Clear format' })}
+                        icon={<FormatClear />}
+                    />
+                    <IconButton
+                        onClick={handleOnPreview}
+                        label={formatMessage({ id: 'bold-title-editor.input.code', defaultMessage: 'Show code' })}
+                        icon={preview ? <Code /> : <CodeOff />}
+                    />
                 </Stack>
                 {value && preview && <Preview>{value}</Preview>}
                 <FieldHint />

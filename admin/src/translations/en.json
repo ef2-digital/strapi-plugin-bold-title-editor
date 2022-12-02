@@ -1,5 +1,9 @@
 {
     "bold-title-editor.label": "Bold title editor",
     "bold-title-editor.description": "A bold title/text editor to accent certain parts",
-    "bold-title-editor.bold": "bold"
+    "bold-title-editor.input.bold": "Bold",
+    "bold-title-editor.input.clear": "Clear format",
+    "bold-title-editor.input.code": "Show code",
+    "bold-title-editor.options.advanced.requiredField": "Required field",
+    "bold-title-editor.options.advanced.requiredField.description": "You won't be able to create an entry if this field is empty"
 }

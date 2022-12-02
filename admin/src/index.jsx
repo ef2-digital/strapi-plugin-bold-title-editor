@@ -14,6 +14,30 @@ export default {
             },
             components: {
                 Input: async () => import(/* webpackChunkName: "input-component" */ './components/Input')
+            },
+            options: {
+                advanced: [
+                    {
+                        sectionTitle: {
+                            id: 'global.settings',
+                            defaultMessage: 'Settings'
+                        },
+                        items: [
+                            {
+                                name: 'required',
+                                type: 'checkbox',
+                                intlLabel: {
+                                    id: 'bold-title-editor.options.advanced.requiredField',
+                                    defaultMessage: 'Required field'
+                                },
+                                description: {
+                                    id: 'bold-title-editor.options.advanced.requiredField.description',
+                                    defaultMessage: "You won't be able to create an entry if this field is empty"
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         });
     },
