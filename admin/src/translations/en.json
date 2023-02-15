@@ -5,5 +5,9 @@
     "bold-title-editor.input.clear": "Clear format",
     "bold-title-editor.input.code": "Show code",
     "bold-title-editor.options.advanced.requiredField": "Required field",
-    "bold-title-editor.options.advanced.requiredField.description": "You won't be able to create an entry if this field is empty"
+    "bold-title-editor.options.advanced.requiredField.description": "You won't be able to create an entry if this field is empty",
+    "bold-title-editor.options.base.output": "Output",
+    "bold-title-editor.options.base.output.description": "Choose output of plugin",
+    "bold-title-editor.options.base.output.html": "HTML",
+    "bold-title-editor.options.base.output.markdown": "Markdown"
 }

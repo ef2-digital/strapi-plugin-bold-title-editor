@@ -16,6 +16,43 @@ export default {
                 Input: async () => import(/* webpackChunkName: "input-component" */ './components/Input')
             },
             options: {
+                base: [
+                    {
+                        intlLabel: {
+                            id: 'bold-title-editor.options.base.output',
+                            defaultMessage: 'Output',
+                        },
+                        description: {
+                            id: 'bold-title-editor.options.base.output.description',
+                            defaultMessage: "Choose output of plugin",
+                        },
+                        name: 'options.output',
+                        type: 'select',
+                        defaultValue: 'HTML',
+                        options: [
+                            {
+                                key: 'html',
+                                value: 'html',
+                                metadatas: {
+                                    intlLabel: {
+                                        id: 'bold-title-editor.options.base.output.html',
+                                        defaultMessage: 'HTML'
+                                    }
+                                }
+                            },
+                            {
+                                key: 'markdown',
+                                value: 'markdown',
+                                metadatas: {
+                                    intlLabel: {
+                                        id: 'bold-title-editor.options.base.output.markdown',
+                                        defaultMessage: 'Markdown'
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                ],
                 advanced: [
                     {
                         sectionTitle: {

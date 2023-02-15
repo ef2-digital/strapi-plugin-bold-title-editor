@@ -1,6 +1,6 @@
 {
   "name": "@ef2/strapi-plugin-bold-title-editor",
-  "version": "1.0.6",
+  "version": "1.0.7-beta.0",
   "description": "A bold title/text editor to accent certain parts",
   "strapi": {
     "name": "bold-title-editor",
@@ -8,8 +8,11 @@
     "kind": "plugin"
   },
   "dependencies": {
+    "@strapi/design-system": "^1.6.3",
+    "node-html-parser": "^6.1.4",
+    "react": "^18.2.0",
     "react-contenteditable": "^3.3.6",
-    "striptags": "^3.2.0"
+    "showdown": "^2.1.0"
   },
   "peerDependencies": {
     "@strapi/strapi": "^4.4.0"
@@ -21,9 +24,5 @@
   "author": {
     "name": "EF2"
   },
-  "license": "MIT",
-  "scripts": {
-    "develop": "tsc -w",
-    "build": "tsc"
-  }
+  "license": "MIT"
 }

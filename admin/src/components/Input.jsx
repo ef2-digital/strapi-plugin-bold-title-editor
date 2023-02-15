@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import striptags from 'striptags';
 import styled from 'styled-components';
 import ReactContentEditable from 'react-contenteditable';
 import { inputFocusStyle } from '@strapi/design-system';
@@ -11,6 +10,10 @@ import FormatClear from '../icons/FormatClear';
 import Bold from '../icons/Bold';
 import Code from '../icons/Code';
 import CodeOff from '../icons/CodeOff';
+import { parse, NodeType } from 'node-html-parser';
+import showdown from 'showdown';
+
+const converter = new showdown.Converter();
 
 const ContentEditable = styled(ReactContentEditable)`
     flex: 1;
@@ -24,7 +27,7 @@ const ContentEditable = styled(ReactContentEditable)`
     color: ${({ theme }) => theme.colors.neutral800};
     ${inputFocusStyle()}
 
-    b {
+    b, strong {
         font-weight: ${({ theme }) => theme.fontWeights.bold};
     }
 `;
@@ -46,14 +49,89 @@ const executeCommand = (commandId, value) => {
     document.execCommand(commandId, false, value);
 };
 
-const strip = (value) => {
-    return value.length > 0 ? striptags(value, ['b', 'br']) : undefined;
+const addText = (lines, text, bold) => {
+    if (lines.length === 0) {
+        return [[{ text, bold: !!bold }]];
+    }
+
+    const lineIndex = lines.length - 1;
+    const line = lines[lineIndex];
+
+    if (!line) {
+        return lines;
+    }
+
+    line.push({ text, bold: !!bold });
+    lines.splice(lineIndex, 1, line);
+
+    return lines;
 };
 
-const Input = ({ value, name, onChange, error, description, required, labelAction, intlLabel }) => {
+const reduceParsed = (html, bold) => {
+    return html.childNodes.reduce((a, c) => {
+        if (c.nodeType === NodeType.TEXT_NODE) {
+            return addText(a, c.text, bold);
+        }
+
+        if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
+            return [...a, []];
+        }
+
+        if (c.nodeType === NodeType.ELEMENT_NODE && c.childNodes && c.tagName === 'B') {
+            return [...a, ...reduceParsed(c, true)];
+        }
+
+        if (c.nodeType === NodeType.ELEMENT_NODE && c.childNodes && c.childNodes.length > 0) {
+            return [...a, ...reduceParsed(c)];
+        }
+
+        return a;
+    }, []);
+};
+
+const toMarkdown = (parsed, clear) => {
+    return parsed
+        .map((line) =>
+            line.reduce((a, c) => {
+                if (c.bold && !clear) {
+                    return `${a}**${c.text}**`;
+                }
+
+                return a + c.text;
+            }, '')
+        )
+        .join(clear ? '' : '\n');
+};
+
+const toHtml = (parsed, clear) => {
+    return parsed
+        .map((line) =>
+            line.reduce((a, c) => {
+                if (c.bold && !clear) {
+                    return `${a}<b>${c.text}</b>`;
+                }
+
+                return a + c.text;
+            }, '')
+        )
+        .join(clear ? '' : '<br>');
+};
+
+const getValueToUpdate = (html, markdown, clear) => {
+    const parsed = reduceParsed(parse(html));
+    return markdown ? toMarkdown(parsed, clear) : toHtml(parsed, clear);
+};
+
+const getValue = (value, markdown) => {
+    return value && markdown ? converter.makeHtml(value) : value ?? '';
+};
+
+const Input = ({ value, name, onChange, error, description, required, labelAction, intlLabel, attribute }) => {
     const ref = useRef();
     const { formatMessage } = useIntl();
     const [preview, setPreview] = useState(false);
+
+    const markdown = !!(attribute.options && attribute.options.output === 'markdown');
 
     // Methods.
     const update = (value) => {
@@ -64,17 +142,15 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
         event.preventDefault();
         const html = event.clipboardData.getData('text/html');
 
-        // Replace <strong> for <b>.
-        const value = strip(html.replace(/<strong[^>]*>/g, '<b>').replace(/<\/strong>/g, '</b>'));
-        update(value);
+        update(getValueToUpdate(html, markdown));
     };
 
     const handleOnChange = (event) => {
-        update(strip(event.target.value));
+        update(getValueToUpdate(event.target.value, markdown));
     };
 
     const handleOnClear = () => {
-        update(striptags(value));
+        update(getValueToUpdate(getValue(value, markdown), markdown, true));
     };
 
     const handleOnPreview = () => {
@@ -96,7 +172,7 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
                 <Stack spacing={2} horizontal>
                     <ContentEditable
                         innerRef={ref}
-                        html={value ?? ''}
+                        html={getValue(value, markdown)}
                         onPaste={handleOnPaste}
                         onChange={handleOnChange}
                         onKeyDown={handleOnKeyDown}
