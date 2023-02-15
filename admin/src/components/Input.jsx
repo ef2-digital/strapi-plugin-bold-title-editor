@@ -14,6 +14,7 @@ import { parse, NodeType } from 'node-html-parser';
 import showdown from 'showdown';
 
 const converter = new showdown.Converter();
+converter.setOption('simpleLineBreaks', true);
 
 const ContentEditable = styled(ReactContentEditable)`
     flex: 1;
@@ -73,11 +74,11 @@ const reduceParsed = (html, bold) => {
             return addText(a, c.text, bold);
         }
 
-        if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
-            return [...a, []];
-        }
+        // if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
+        //     return [...a, [{ text: ' ' }]];
+        // }
 
-        if (c.nodeType === NodeType.ELEMENT_NODE && c.childNodes && c.tagName === 'B') {
+        if (c.nodeType === NodeType.ELEMENT_NODE && c.childNodes && (c.tagName === 'B' || c.tagName === 'STRONG')) {
             return [...a, ...reduceParsed(c, true)];
         }
 
@@ -100,7 +101,7 @@ const toMarkdown = (parsed, clear) => {
                 return a + c.text;
             }, '')
         )
-        .join(clear ? '' : '\n');
+        .join('');
 };
 
 const toHtml = (parsed, clear) => {
@@ -114,7 +115,7 @@ const toHtml = (parsed, clear) => {
                 return a + c.text;
             }, '')
         )
-        .join(clear ? '' : '<br>');
+        .join('');
 };
 
 const getValueToUpdate = (html, markdown, clear) => {
@@ -122,7 +123,7 @@ const getValueToUpdate = (html, markdown, clear) => {
     return markdown ? toMarkdown(parsed, clear) : toHtml(parsed, clear);
 };
 
-const getValue = (value, markdown) => {
+const getHtml = (value, markdown) => {
     return value && markdown ? converter.makeHtml(value) : value ?? '';
 };
 
@@ -146,11 +147,11 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
     };
 
     const handleOnChange = (event) => {
-        update(getValueToUpdate(getValue(event.target.value, markdown), markdown));
+        update(getValueToUpdate(getHtml(event.target.value, markdown), markdown));
     };
 
     const handleOnClear = () => {
-        update(getValueToUpdate(getValue(value, markdown), markdown, true));
+        update(getValueToUpdate(getHtml(value, markdown), markdown, true));
     };
 
     const handleOnPreview = () => {
@@ -172,7 +173,7 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
                 <Stack spacing={2} horizontal>
                     <ContentEditable
                         innerRef={ref}
-                        html={getValue(value, markdown)}
+                        html={getHtml(value, markdown)}
                         onPaste={handleOnPaste}
                         onChange={handleOnChange}
                         onKeyDown={handleOnKeyDown}
