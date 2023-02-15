@@ -146,7 +146,7 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
     };
 
     const handleOnChange = (event) => {
-        update(getValueToUpdate(event.target.value, markdown));
+        update(getValueToUpdate(getValue(event.target.value, markdown), markdown));
     };
 
     const handleOnClear = () => {
