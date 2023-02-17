@@ -56,8 +56,6 @@ const reduceParsed = (html, bold) => {
             return [...a, { type: 'text', text: c.text, bold: !!bold }];
         }
 
-        console.log(c.tagName);
-
         if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
             return [...a, { type: 'break' }];
         }
