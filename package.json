@@ -1,6 +1,6 @@
 {
   "name": "@ef2/strapi-plugin-bold-title-editor",
-  "version": "1.0.7-beta.2",
+  "version": "1.0.7-beta.3",
   "description": "A bold title/text editor to accent certain parts",
   "strapi": {
     "name": "bold-title-editor",

@@ -50,33 +50,17 @@ const executeCommand = (commandId, value) => {
     document.execCommand(commandId, false, value);
 };
 
-const addText = (lines, text, bold) => {
-    if (lines.length === 0) {
-        return [[{ text, bold: !!bold }]];
-    }
-
-    const lineIndex = lines.length - 1;
-    const line = lines[lineIndex];
-
-    if (!line) {
-        return lines;
-    }
-
-    line.push({ text, bold: !!bold });
-    lines.splice(lineIndex, 1, line);
-
-    return lines;
-};
-
 const reduceParsed = (html, bold) => {
     return html.childNodes.reduce((a, c) => {
         if (c.nodeType === NodeType.TEXT_NODE) {
-            return addText(a, c.text, bold);
+            return [...a, { type: 'text', text: c.text, bold: !!bold }];
         }
 
-        // if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
-        //     return [...a, [{ text: ' ' }]];
-        // }
+        console.log(c.tagName);
+
+        if (c.nodeType === NodeType.ELEMENT_NODE && c.tagName === 'BR') {
+            return [...a, { type: 'break' }];
+        }
 
         if (c.nodeType === NodeType.ELEMENT_NODE && c.childNodes && (c.tagName === 'B' || c.tagName === 'STRONG')) {
             return [...a, ...reduceParsed(c, true)];
@@ -91,31 +75,39 @@ const reduceParsed = (html, bold) => {
 };
 
 const toMarkdown = (parsed, clear) => {
-    return parsed
-        .map((line) =>
-            line.reduce((a, c) => {
-                if (c.bold && !clear) {
-                    return `${a}**${c.text}**`;
-                }
+    return parsed.reduce((a, c) => {
+        if (c.type === 'break' && !clear) {
+            return `${a}  \n`;
+        }
 
-                return a + c.text;
-            }, '')
-        )
-        .join('');
+        if (c.type === 'text' && c.bold && !clear) {
+            return `${a}**${clear ? c.text.replace(/(\n)/gm, '') : c.text}**`;
+        }
+
+        if (c.type === 'text') {
+            return a + (clear ? c.text.replace(/(\n)/gm, '') : c.text);
+        }
+
+        return a;
+    }, '');
 };
 
 const toHtml = (parsed, clear) => {
-    return parsed
-        .map((line) =>
-            line.reduce((a, c) => {
-                if (c.bold && !clear) {
-                    return `${a}<b>${c.text}</b>`;
-                }
+    return parsed.reduce((a, c) => {
+        if (c.type === 'break' && !clear) {
+            return clear ? a : `${a}<br>`;
+        }
 
-                return a + c.text;
-            }, '')
-        )
-        .join('');
+        if (c.type === 'text' && c.bold && !clear) {
+            return `${a}<b>${c.text}</b>`;
+        }
+
+        if (c.type === 'text') {
+            return a + c.text;
+        }
+
+        return a;
+    }, '');
 };
 
 const getValueToUpdate = (html, markdown, clear) => {
