@@ -131,9 +131,10 @@ const Input = ({ value, name, onChange, error, description, required, labelActio
 
     const handleOnPaste = (event) => {
         event.preventDefault();
+        const plainText = event.clipboardData.getData('text/plain');
         const html = event.clipboardData.getData('text/html');
 
-        update(getValueToUpdate(html, markdown));
+        update(getValueToUpdate(html || plainText, markdown));
     };
 
     const handleOnChange = (event) => {
