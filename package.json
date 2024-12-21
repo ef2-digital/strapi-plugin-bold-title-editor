@@ -66,7 +66,7 @@
     "displayName": "Bold title editor",
     "description": "A bold title/text editor to accent certain parts"
   },
-  "name": "strapi-plugin-bold-title-editor",
+  "name": "@ef2/strapi-plugin-bold-title-editor",
   "description": "A bold title/text editor to accent certain parts",
   "license": "MIT",
   "repository": {
