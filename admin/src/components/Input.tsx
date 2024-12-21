@@ -222,7 +222,7 @@ const Input: React.FC<InputProps> = ({
         <IconButtonGroup>
           <IconButton
             size="S"
-            style={{ 'border-top-left-radius': '0px', 'border-bottom-left-radius': '0px' }}
+            style={{ borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' }}
             onClick={() => executeCommand('bold')}
             label={formatMessage({ id: 'bold-title-editor.input.bold', defaultMessage: 'Bold' })}
           >
