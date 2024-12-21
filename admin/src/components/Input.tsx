@@ -1,6 +1,5 @@
 import { useState, useRef, ClipboardEvent, KeyboardEvent } from 'react';
 import styled from 'styled-components';
-import ReactContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 import { inputFocusStyle } from '@strapi/design-system';
 import { Flex, IconButton, IconButtonGroup } from '@strapi/design-system';
 import { useIntl, MessageDescriptor } from 'react-intl';
@@ -21,21 +20,17 @@ type ParsedNode = {
   bold?: boolean;
 };
 
-const ContentEditable = styled(ReactContentEditable)`
+const ContentEditable = styled.div`
   flex: 1;
   width: 100%;
   font-size: ${({ theme }) => theme.fontSizes[2]};
   line-height: ${({ theme }) => theme.lineHeights[2]};
   border-radius: ${({ theme }) => theme.borderRadius};
   border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-right: 1px solid transparent;
-  background: ${({ theme }) => theme.colors.neutral0};
   padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
   color: ${({ theme }) => theme.colors.neutral800};
+  background: ${({ theme }) => theme.colors.neutral0};
   ${inputFocusStyle()}
-
   b, strong {
     font-weight: ${({ theme }) => theme.fontWeights.bold};
   }
@@ -169,7 +164,7 @@ const Input: React.FC<InputProps> = ({
   attribute,
   hint,
 }) => {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
   const [preview, setPreview] = useState(false);
 
@@ -187,7 +182,7 @@ const Input: React.FC<InputProps> = ({
     update(getValueToUpdate(html || plainText, markdown));
   };
 
-  const handleOnChange = (event: ContentEditableEvent) => {
+  const handleOnChange = (event: any) => {
     update(getValueToUpdate(getHtml(event.target.value, markdown), markdown));
   };
 
@@ -212,17 +207,9 @@ const Input: React.FC<InputProps> = ({
       </Field.Label>
       <Field.Hint />
       <Flex spacing={2}>
-        <ContentEditable
-          innerRef={ref as React.RefObject<HTMLElement>}
-          html={getHtml(value, markdown)}
-          onPaste={handleOnPaste}
-          onChange={handleOnChange}
-          onKeyDown={handleOnKeyDown}
-        />
         <IconButtonGroup>
           <IconButton
             size="S"
-            style={{ borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' }}
             onClick={() => executeCommand('bold')}
             label={formatMessage({ id: 'bold-title-editor.input.bold', defaultMessage: 'Bold' })}
           >
@@ -249,6 +236,19 @@ const Input: React.FC<InputProps> = ({
             {preview ? <Code /> : <CodeOff />}
           </IconButton>
         </IconButtonGroup>
+      </Flex>
+      <Flex spacing={2}>
+        <ContentEditable
+          ref={ref as React.RefObject<HTMLDivElement>}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={(e) =>
+            handleOnChange({ target: { value: (e.target as HTMLElement).innerHTML } })
+          }
+          onPaste={handleOnPaste}
+          onKeyDown={handleOnKeyDown}
+          dangerouslySetInnerHTML={{ __html: getHtml(value, markdown) }}
+        />
       </Flex>
       {value && preview && <Preview>{value}</Preview>}
       <Field.Error />
