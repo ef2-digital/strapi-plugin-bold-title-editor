@@ -1,7 +1,7 @@
-import { useState, useRef, ClipboardEvent, KeyboardEvent } from 'react';
+import { useState, useRef, Ref } from 'react';
 import styled from 'styled-components';
 import { inputFocusStyle } from '@strapi/design-system';
-import { Flex, IconButton, IconButtonGroup } from '@strapi/design-system';
+import { IconButton, IconButtonGroup } from '@strapi/design-system';
 import { useIntl, MessageDescriptor } from 'react-intl';
 import { Field } from '@strapi/design-system';
 import FormatClear from '../icons/FormatClear';
@@ -10,6 +10,8 @@ import Code from '../icons/Code';
 import CodeOff from '../icons/CodeOff';
 import { parse, NodeType } from 'node-html-parser';
 import showdown from 'showdown';
+import { Grid } from '@strapi/design-system';
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 
 const converter = new showdown.Converter();
 converter.setOption('simpleLineBreaks', true);
@@ -20,7 +22,7 @@ type ParsedNode = {
   bold?: boolean;
 };
 
-const ContentEditable = styled.div`
+const StyledContentEditable = styled(ContentEditable)`
   flex: 1;
   width: 100%;
   font-size: ${({ theme }) => theme.fontSizes[2]};
@@ -174,15 +176,7 @@ const Input: React.FC<InputProps> = ({
     onChange({ target: { name, value } });
   };
 
-  const handleOnPaste = (event: ClipboardEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const plainText = event.clipboardData.getData('text/plain');
-    const html = event.clipboardData.getData('text/html');
-
-    update(getValueToUpdate(html || plainText, markdown));
-  };
-
-  const handleOnChange = (event: any) => {
+  const handleOnChange = (event: ContentEditableEvent) => {
     update(getValueToUpdate(getHtml(event.target.value, markdown), markdown));
   };
 
@@ -194,62 +188,62 @@ const Input: React.FC<InputProps> = ({
     setPreview((prev) => !prev);
   };
 
-  const handleOnKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
-      ref.current?.blur();
-    }
-  };
-
   return (
     <Field.Root name={name} id={name} error={error} hint={hint}>
       <Field.Label action={labelAction} required={required}>
         {name}
       </Field.Label>
       <Field.Hint />
-      <Flex spacing={2}>
-        <IconButtonGroup>
-          <IconButton
-            size="S"
-            onClick={() => executeCommand('bold')}
-            label={formatMessage({ id: 'bold-title-editor.input.bold', defaultMessage: 'Bold' })}
-          >
-            <Bold />
-          </IconButton>
-          <IconButton
-            ize="S"
-            onClick={handleOnClear}
-            label={formatMessage({
-              id: 'bold-title-editor.input.clear',
-              defaultMessage: 'Clear format',
-            })}
-          >
-            <FormatClear />
-          </IconButton>
-          <IconButton
-            size="S"
-            onClick={handleOnPreview}
-            label={formatMessage({
-              id: 'bold-title-editor.input.code',
-              defaultMessage: 'Show code',
-            })}
-          >
-            {preview ? <Code /> : <CodeOff />}
-          </IconButton>
-        </IconButtonGroup>
-      </Flex>
-      <Flex spacing={2}>
-        <ContentEditable
-          ref={ref as React.RefObject<HTMLDivElement>}
-          contentEditable
-          suppressContentEditableWarning
-          onInput={(e) =>
-            handleOnChange({ target: { value: (e.target as HTMLElement).innerHTML } })
-          }
-          onPaste={handleOnPaste}
-          onKeyDown={handleOnKeyDown}
-          dangerouslySetInnerHTML={{ __html: getHtml(value, markdown) }}
-        />
-      </Flex>
+      <Grid.Root
+        gap={{
+          large: 5,
+          medium: 2,
+          initial: 1,
+        }}
+        style={{ alignItems: 'flex-start' }}
+      >
+        <Grid.Item xs={12} col={9}>
+          <StyledContentEditable
+            ref={ref as Ref<ContentEditable>}
+            html={getHtml(value, markdown)}
+            disabled={false}
+            onChange={handleOnChange}
+            tagName="div"
+            className="contentEditable"
+          />
+        </Grid.Item>
+        <Grid.Item xs={12} col={3}>
+          <IconButtonGroup>
+            <IconButton
+              size="S"
+              onClick={() => executeCommand('bold')}
+              label={formatMessage({ id: 'bold-title-editor.input.bold', defaultMessage: 'Bold' })}
+            >
+              <Bold />
+            </IconButton>
+            <IconButton
+              ize="S"
+              onClick={handleOnClear}
+              label={formatMessage({
+                id: 'bold-title-editor.input.clear',
+                defaultMessage: 'Clear format',
+              })}
+            >
+              <FormatClear />
+            </IconButton>
+            <IconButton
+              size="S"
+              onClick={handleOnPreview}
+              label={formatMessage({
+                id: 'bold-title-editor.input.code',
+                defaultMessage: 'Show code',
+              })}
+            >
+              {preview ? <Code /> : <CodeOff />}
+            </IconButton>
+          </IconButtonGroup>
+        </Grid.Item>
+      </Grid.Root>
       {value && preview && <Preview>{value}</Preview>}
       <Field.Error />
     </Field.Root>
