@@ -3,7 +3,9 @@
 A bold title/text editor to accentuate **certain parts** through HTML or Markdown. 
 
 ## ✨ Compatibility
-This plugin has been refactored to use only Strapi v5. For older releases see npm.
+This plugin is currently in development for version 5. In the meantime, use this version:
+https://www.npmjs.com/package/@sklinet/strapi-plugin-bold-title-editor
+
 
 ## ✨ Features
 * **Different output options:** choose between HTML and Markdown.
