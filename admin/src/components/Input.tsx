@@ -22,18 +22,23 @@ type ParsedNode = {
   bold?: boolean;
 };
 
-const StyledContentEditable = styled(ContentEditable)`
+const StyledContentEditable = styled.div`
   flex: 1;
   width: 100%;
-  font-size: ${({ theme }) => theme.fontSizes[2]};
-  line-height: ${({ theme }) => theme.lineHeights[2]};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
-  color: ${({ theme }) => theme.colors.neutral800};
-  background: ${({ theme }) => theme.colors.neutral0};
-  ${inputFocusStyle()}
-  b, strong {
+  div {
+    flex: 1;
+    width: 100%;
+    font-size: ${({ theme }) => theme.fontSizes[2]};
+    line-height: ${({ theme }) => theme.lineHeights[2]};
+    border-radius: ${({ theme }) => theme.borderRadius};
+    border: 1px solid ${({ theme }) => theme.colors.neutral200};
+    padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+    color: ${({ theme }) => theme.colors.neutral800};
+    background: ${({ theme }) => theme.colors.neutral0};
+    ${inputFocusStyle()}
+  }
+  b,
+  strong {
     font-weight: ${({ theme }) => theme.fontWeights.bold};
   }
 `;
@@ -188,6 +193,22 @@ const Input: React.FC<InputProps> = ({
     setPreview((prev) => !prev);
   };
 
+  const styles = styled(`
+  flex: 1;
+  width: 100%;
+  font-size: ${({ theme }: { theme: any }) => theme.fontSizes[2]};
+  line-height: ${({ theme }: { theme: any }) => theme.lineHeights[2]};
+  border-radius: ${({ theme }: { theme: any }) => theme.borderRadius};
+  border: 1px solid ${({ theme }: { theme: any }) => theme.colors.neutral200};
+  padding: ${({ theme }: { theme: any }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  color: ${({ theme }: { theme: any }) => theme.colors.neutral800};
+  background: ${({ theme }: { theme: any }) => theme.colors.neutral0};
+  ${inputFocusStyle()}
+  b, strong {
+    font-weight: ${({ theme }: { theme: any }) => theme.fontWeights.bold};
+  }
+`);
+
   return (
     <Field.Root name={name} id={name} error={error} hint={hint}>
       <Field.Label action={labelAction} required={required}>
@@ -203,14 +224,20 @@ const Input: React.FC<InputProps> = ({
         style={{ alignItems: 'flex-start' }}
       >
         <Grid.Item xs={12} col={9}>
-          <StyledContentEditable
-            ref={ref as Ref<ContentEditable>}
-            html={getHtml(value, markdown)}
-            disabled={false}
-            onChange={handleOnChange}
-            tagName="div"
-            className="contentEditable"
-          />
+          <StyledContentEditable>
+            <ContentEditable
+              ref={ref as Ref<ContentEditable>}
+              html={getHtml(value, markdown)}
+              disabled={false}
+              onChange={handleOnChange}
+              tagName="div"
+              className="contentEditable"
+              style={{
+                flex: 1,
+                width: '100%',
+              }}
+            />
+          </StyledContentEditable>
         </Grid.Item>
         <Grid.Item xs={12} col={3}>
           <IconButtonGroup>
