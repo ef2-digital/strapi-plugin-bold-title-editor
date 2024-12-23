@@ -1,5 +1,5 @@
 {
-  "version": "2.0.2",
+  "version": "2.0.4",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -35,6 +35,7 @@
     "@strapi/icons": "^2.0.0-rc.14",
     "@types/showdown": "^2.0.6",
     "node-html-parser": "^6.1.13",
+    "react-contenteditable": "^3.3.7",
     "react-intl": "^7.0.4",
     "showdown": "^2.1.0"
   },
